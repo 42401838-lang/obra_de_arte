@@ -1,0 +1,26 @@
+.barra-navegacion {
+    background-color: #1E3C2A;
+}
+
+.barra-navegacion .navbar-brand {
+    text-transform: uppercase;
+    white-space: normal;
+}
+
+.barra-navegacion a {
+    color: white;
+}
+
+.barra-navegacion a:hover,
+.barra-navegacion a:focus-visible {
+    color: white;
+    text-decoration: underline;
+}
+
+.barra-navegacion .navbar-toggler {
+    border-color: white;
+}
+
+.barra-navegacion .navbar-toggler-icon {
+    filter: brightness(0) invert(1);
+}
