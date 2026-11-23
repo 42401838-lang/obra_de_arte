@@ -24,3 +24,8 @@
 .barra-navegacion .navbar-toggler-icon {
     filter: brightness(0) invert(1);
 }
+
+/* Ajusta el tamaño de los títulos de las tarjetas de la colección inicial. */
+#coleccion .card-title {
+  font-size: 18px;
+}
