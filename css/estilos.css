@@ -58,3 +58,9 @@ main {
     background-color: #D6CCC0;
     border-radius: 10px;
 }
+/* Define el fondo, el borde y el espacio interior de cada ficha de resultados. */
+.obra-resultado {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+}
