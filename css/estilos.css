@@ -43,3 +43,18 @@
     font-size: 25px;
     font-weight: bold;
 }
+/* Define el fondo de la página y el margen del contenido principal. */
+body {
+    background-color: #FBF5EE;
+}
+
+main {
+    margin: 10px;
+}
+
+/* Destaca el formulario con un fondo beige y esquinas redondeadas. */
+#cuadro-de-busqueda {
+    padding: 15px;
+    background-color: #D6CCC0;
+    border-radius: 10px;
+}
