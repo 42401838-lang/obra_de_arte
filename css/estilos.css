@@ -29,3 +29,17 @@
 #coleccion .card-title {
   font-size: 18px;
 }
+
+/* Aplica el fondo verde y deja espacio alrededor del texto. */
+.pie-pagina {
+    background-color: #1E3C2A;
+    color: white;
+    padding: 25px;
+}
+
+/* Destaca el nombre del sitio y elimina el margen del párrafo. */
+.pie-pagina p {
+    margin: 0;
+    font-size: 25px;
+    font-weight: bold;
+}
