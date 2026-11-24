@@ -1,42 +1,45 @@
-// Obtenemos el formulario, el campo de búsqueda y el elemento para mostrar avisos.
+// Elementos del formulario que se usan para leer la búsqueda y mostrar avisos.
 const formularioBusqueda = document.getElementById("formBusqueda");
 const campoBusqueda = document.getElementById("cadenaBusqueda");
 const avisoBusqueda = document.getElementById("errorBusqueda");
 
+// La sección contiene el espacio donde se insertan las fichas de las obras.
 const seccionResultados = document.getElementById("seccion-respuestas");
 const contenedorObras = document.getElementById("obras");
 const botonBuscar = formularioBusqueda.querySelector('button[type="submit"]');
 
+// Dirección base a la que se agrega el criterio de cada búsqueda.
 const urlApiObras = "https://nearness-cyclist-debtor.ngrok-free.dev/pf/obras/index.php";
 
-// Ejecutamos buscarObras cuando se envía el formulario.
+// El envío del formulario llama a buscarObras, incluso si se hace con Enter.
 formularioBusqueda.addEventListener("submit", buscarObras);
 
 async function buscarObras(evento) {
-    // Cancelamos el envío normal para que la página no se recargue.
+    // Se cancela el envío normal para actualizar los resultados en la misma página.
     evento.preventDefault();
 
     const terminoBusqueda = campoBusqueda.value.trim();
     avisoBusqueda.textContent = "";
 
+    // Si el campo queda vacío después de quitar los espacios, se muestra un aviso.
     if (!terminoBusqueda) {
         avisoBusqueda.textContent = "Proporciona la cadena de búsqueda.";
         campoBusqueda.focus();
         return;
     }
 
-    // El valor del radio indica el parámetro de la API: q, tipo, anio o m.
+    // El radio seleccionado indica qué parámetro recibe la API: q, tipo, anio o m.
     const radioSeleccionado = formularioBusqueda.querySelector('input[name="criterio"]:checked');
     const criterioBusqueda = radioSeleccionado.value;
     const urlConsulta = new URL(urlApiObras);
     urlConsulta.searchParams.set(criterioBusqueda, terminoBusqueda);
 
-    // Retiramos las fichas anteriores y desactivamos el botón durante la consulta.
+    // Se retiran las fichas anteriores y se desactiva Buscar mientras responde la API.
     seccionResultados.hidden = true;
     contenedorObras.innerHTML = "";
     botonBuscar.disabled = true;
 
-    // Creamos una promesa para realizar la solicitud al servidor.
+    // La promesa entrega los datos de la petición GET o informa por qué falló.
     const promesaObras = new Promise(function (resolver, rechazar) {
         const solicitudObras = new XMLHttpRequest();
 
@@ -44,7 +47,7 @@ async function buscarObras(evento) {
         solicitudObras.setRequestHeader("ngrok-skip-browser-warning", "true");
         solicitudObras.timeout = 15000;
 
-        // Comprobamos el estado HTTP y convertimos la respuesta JSON.
+        // Si el estado HTTP indica éxito, se intenta convertir la respuesta JSON.
         solicitudObras.onload = function () {
             if (solicitudObras.status >= 200 && solicitudObras.status < 300) {
                 try {
@@ -57,7 +60,7 @@ async function buscarObras(evento) {
             }
         };
 
-        // Rechazamos la promesa si falla la conexión o se agota la espera.
+        // Estos eventos cubren los fallos de conexión y el límite de 15 segundos.
         solicitudObras.onerror = function () {
             rechazar(new Error("Error de red o CORS."));
         };
@@ -69,35 +72,37 @@ async function buscarObras(evento) {
         solicitudObras.send();
     });
 
+    // En esta cadena se acumula el HTML de todas las fichas.
     let salidaObras = "";
 
     try {
-        // Esperamos la respuesta y comprobamos que sea un arreglo de obras.
+        // await espera los datos antes de comprobar si la respuesta es un arreglo.
         const obrasEncontradas = await promesaObras;
 
         if (!Array.isArray(obrasEncontradas)) {
             throw new Error("La API no devolvió un arreglo de obras.");
         }
 
+        // Un arreglo vacío indica que la consulta terminó sin coincidencias.
         if (obrasEncontradas.length === 0) {
             avisoBusqueda.textContent = "No se encontraron obras para esa búsqueda.";
             return;
         }
 
-        // Escapamos los datos de la API antes de insertarlos con innerHTML.
+        // Se escapan los caracteres especiales para mostrar los datos como texto al usar innerHTML.
         const escaparHtml = (valor) => String(valor ?? "—")
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;");
 
-        // Armamos una ficha por cada obra encontrada.
+        // Cada obra agrega una ficha con su imagen y sus datos al HTML de salida.
         obrasEncontradas.forEach((obra) => {
             const tituloObra = escaparHtml(obra.titulo);
             let imagenObra = "";
 
             if (obra.imagen) {
-                // Resolvemos las rutas de la galería desde la carpeta de la API.
+                // Se quitan las barras iniciales para resolver la ruta desde la carpeta de la API.
                 const urlImagen = new URL(obra.imagen.replace(/^\/+/, ""), urlApiObras);
 
                 if (urlImagen.protocol === "https:" || urlImagen.protocol === "http:") {
@@ -108,8 +113,8 @@ async function buscarObras(evento) {
                 }
             }
 
-            // En escritorio la imagen y los datos van lado a lado.
-            // En móvil, la imagen queda arriba de los datos.
+            // Desde el tamaño mediano, la imagen y los datos van lado a lado.
+            // Si la ficha no incluye imagen, los datos ocupan todo su ancho.
             const claseDatosObra = imagenObra ? "col-12 col-md-6" : "col-12";
 
             salidaObras += `
@@ -130,14 +135,15 @@ async function buscarObras(evento) {
                 </div>`;
         });
 
-        // Insertamos las fichas en el contenedor y mostramos la sección.
+        // Se insertan todas las fichas juntas y se hace visible la sección de resultados.
         contenedorObras.innerHTML = salidaObras;
         seccionResultados.hidden = false;
     } catch (error) {
-        // Mostramos un aviso en la página y dejamos el detalle en la consola.
+        // La página muestra un aviso breve y la consola conserva el detalle del error.
         console.error(error);
         avisoBusqueda.textContent = "No se pudo completar la búsqueda. Intenta de nuevo.";
     } finally {
+        // Buscar vuelve a habilitarse aunque falle la petición o no haya coincidencias.
         botonBuscar.disabled = false;
     }
 }

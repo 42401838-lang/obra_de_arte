@@ -1,26 +1,34 @@
+/* Barra de navegación */
+
+/* Aplica el fondo verde de la barra de navegación. */
 .barra-navegacion {
     background-color: #1E3C2A;
 }
 
+/* Muestra el nombre del sitio en mayúsculas y permite que pase a otra línea en pantallas angostas. */
 .barra-navegacion .navbar-brand {
     text-transform: uppercase;
     white-space: normal;
 }
 
+/* Los enlaces se muestran en blanco sobre el fondo verde. */
 .barra-navegacion a {
     color: white;
 }
 
+/* Subraya los enlaces al pasar el cursor o al enfocarlos con el teclado. */
 .barra-navegacion a:hover,
 .barra-navegacion a:focus-visible {
     color: white;
     text-decoration: underline;
 }
 
+/* Aplica un borde blanco al botón del menú en pantallas pequeñas. */
 .barra-navegacion .navbar-toggler {
     border-color: white;
 }
 
+/* Convierte en blanco el ícono del botón del menú. */
 .barra-navegacion .navbar-toggler-icon {
     filter: brightness(0) invert(1);
 }
@@ -30,7 +38,7 @@
   font-size: 18px;
 }
 
-/* Aplica el fondo verde y deja espacio alrededor del texto. */
+/* Usa el mismo fondo verde que la barra y deja espacio alrededor del texto. */
 .pie-pagina {
     background-color: #1E3C2A;
     color: white;
@@ -43,11 +51,13 @@
     font-size: 25px;
     font-weight: bold;
 }
-/* Define el fondo de la página y el margen del contenido principal. */
+
+/* Aplica el fondo crema a toda la página. */
 body {
     background-color: #FBF5EE;
 }
 
+/* Deja un margen de 10 píxeles alrededor del contenido principal. */
 main {
     margin: 10px;
 }
@@ -58,6 +68,7 @@ main {
     background-color: #D6CCC0;
     border-radius: 10px;
 }
+
 /* Define el fondo, el borde y el espacio interior de cada ficha de resultados. */
 .obra-resultado {
     background-color: #fff;
